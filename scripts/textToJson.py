@@ -55,7 +55,8 @@ def textToJson(filename):
         if len(segments[0]) >= 3 and segments[0][-3] == "O":
           segments[0] = segments[0][:-3] + "0" + segments[0][-2:]
 
-        campusMatch = re.match(r'[A-Z]{2}-[0-9]{2}', segments[1])
+        # Campus section number may be cut off (PZ-)
+        campusMatch = re.match(r'[A-Z]{2}-', segments[1])
         codeMatch = re.match(r'([A-Z]{4}|[A-Z]{3}|[A-Z]{2})[0-9]{2}', segments[0])
         if campusMatch and codeMatch:
           titleStart = True
@@ -72,8 +73,10 @@ def textToJson(filename):
       if titleStart:
         # Actual title split into 1 and 9 lines after OR 0 and 8 lines after if title split up
         if (not titleSplit and (curCount == 1 or curCount == 9)) or (titleSplit and curCount == 8):
-          append = " ".join(segments)
-          curTitle += " " + append
+          # Date may be accidentally added so check that segments does not match a date
+          dateMatch = re.match(r'[0-9]{2}/[0-9]{2}/[0-9]{4}', segments[0])
+          append = " ".join(segments) if not dateMatch else ""
+          curTitle += " " + append if (curTitle and append) else append
           output[-1][curTerm][-1]["title"] = curTitle
 
         # Credits either 4 OR 3 lines after if title split up
