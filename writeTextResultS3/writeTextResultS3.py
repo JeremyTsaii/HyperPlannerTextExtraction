@@ -3,6 +3,9 @@ import boto3
 import os
 import re
 
+s3 = boto3.client('s3')
+
+
 def getJobResults(jobId):
 
     pages = []
@@ -136,8 +139,6 @@ def lambda_handler(event, context):
             for item in resultPage["Blocks"]:
                 if item["BlockType"] == "LINE":
                     pdfTextArr.append(item["Text"])
-                    
-        s3 = boto3.client('s3')
         
         courses = getCoursesFromText(pdfTextArr)
         

@@ -2,10 +2,10 @@ import json
 import boto3
 from botocore.config import Config
 
+config = Config(s3={"use_accelerate_endpoint": True})
+s3_client = boto3.client('s3', config=config)
+
 def lambda_handler(event, context):
-    config = Config(s3={"use_accelerate_endpoint": True})
-    s3_client = boto3.client('s3', config=config)
-    
     BUCKET = 'Bucket Name'
     OBJECT = event['queryStringParameters']['fileName']
     
