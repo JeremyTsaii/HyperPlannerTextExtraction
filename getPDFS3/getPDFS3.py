@@ -22,7 +22,7 @@ def lambda_handler(event, context):
                 'Name': key
             }
         },
-        JobTag=key + '_Job',
+        JobTag=key,
         NotificationChannel={
             'RoleArn': '',
             'SNSTopicArn': ''
