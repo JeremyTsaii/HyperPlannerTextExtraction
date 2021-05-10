@@ -47,13 +47,22 @@ def shift(arr):
       arr.pop()
       return arr
 
+def strDiff(str1, str2):
+    if len(str1) != len(str2):
+        return float('inf')
+    
+    count = 0
+
+    for i in range(len(str1)):
+        if str1[i] != str2[i]:
+            count += 1
+
+    return count
+
 def getCoursesFromText(textArr):
     output = []
     
-    # Will be set to "Fall", "Spring", or "Summer"
-    prevTerm = "initPrev"
     curTerm = "initCur"
-    
     curCount = 0
     curTitle = ''
     titleStart = False
@@ -71,12 +80,31 @@ def getCoursesFromText(textArr):
         if len(segments) >= 3:
             yearMatch = re.match(r'[2-3][0-9]{3}', segments[0])
             seasonMatch = segments[1] in ["Fall", "Spring", "Summer"]
+
+            # Account for possible mistakes like "SBRNG" vs. "SPRING"
+            # Allow for up to 2 letter mistakes
+            if not seasonMatch:
+                lower = segments[1].lower()
+                if strDiff(lower, "fall") <= 2:
+                    seasonMatch = True
+                    segments[1] = "Fall"
+                if strDiff(lower, "spring") <= 2:
+                    seasonMatch = True
+                    segments[1] = "Spring"
+                if strDiff(lower, "summer") <= 2:
+                    seasonMatch = True
+                    segments[1] = "Summer"
+
             termMatch = segments[2] == "Term"
-            if yearMatch and seasonMatch and termMatch and prevTerm != curTerm:
-                prevTerm = curTerm
+
+            if yearMatch and seasonMatch and termMatch:
                 curTerm = segments[1]
                 if curTerm == "Fall":
-                    output.append({"Fall":[], "Spring":[], "Summer":[]})
+                    # Dont add empty years
+                    if output and output[-1] == {"Fall":[], "Spring":[], "Summer":[]}:
+                        continue
+                    else:
+                        output.append({"Fall":[], "Spring":[], "Summer":[]})
     
         # Course title has Code Section (BIOL023 HM-03)
         if len(segments) >= 2:
