@@ -50,7 +50,10 @@ def shift(arr):
 def getCoursesFromText(textArr):
     output = []
     
-    curTerm = None
+    # Will be set to "Fall", "Spring", or "Summer"
+    prevTerm = "initPrev"
+    curTerm = "initCur"
+    
     curCount = 0
     curTitle = ''
     titleStart = False
@@ -69,7 +72,8 @@ def getCoursesFromText(textArr):
             yearMatch = re.match(r'[2-3][0-9]{3}', segments[0])
             seasonMatch = segments[1] in ["Fall", "Spring", "Summer"]
             termMatch = segments[2] == "Term"
-            if yearMatch and seasonMatch and termMatch:
+            if yearMatch and seasonMatch and termMatch and prevTerm != curTerm:
+                prevTerm = curTerm
                 curTerm = segments[1]
                 if curTerm == "Fall":
                     output.append({"Fall":[], "Spring":[], "Summer":[]})
