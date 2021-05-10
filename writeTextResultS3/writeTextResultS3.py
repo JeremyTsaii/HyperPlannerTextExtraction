@@ -63,12 +63,13 @@ def getCoursesFromText(textArr):
         if titleStart:
             curCount += 1
 
-        # If line starts with Year Term "Term" (2018 Fall Term), marks start of new semester
+        # If line starts with Year season "Term" (2018 Fall Term), marks start of new semester
         # Apperance of "Fall" marks new year
         if len(segments) >= 3:
             yearMatch = re.match(r'[2-3][0-9]{3}', segments[0])
+            seasonMatch = segments[1] in ["Fall", "Spring", "Summer"]
             termMatch = segments[2] == "Term"
-            if yearMatch and termMatch:
+            if yearMatch and seasonMatch and termMatch:
                 curTerm = segments[1]
                 if curTerm == "Fall":
                     output.append({"Fall":[], "Spring":[], "Summer":[]})
